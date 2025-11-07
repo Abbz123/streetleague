@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Street League – Laganmälan</title>
+  <style>
+    :root{--line:#e6e6ea;--brand:#000;--muted:#666;--fg:#111}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:linear-gradient(#fff,#fafafa);color:var(--fg)}
+    .container{max-width:980px;margin:0 auto;padding:20px}
+    header{background:#fff;border-bottom:1px solid var(--line)}
+    .top{display:flex;align-items:center;justify-content:space-between;padding:12px 20px}
+    .badge{background:var(--brand);color:#fff;padding:8px 12px;border-radius:10px;font-weight:900}
+    .card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+    .btn{border:1px solid var(--line);border-radius:16px;padding:9px 14px;font-weight:700;cursor:pointer}
+    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+    label{font-weight:600;font-size:14px;display:block;margin-top:10px}
+    input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;font-size:14px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:700px){.row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+   
+
+  <main class="container">
+    <div class="card">
+      <h1>Anmäl ditt lag</h1>
+      <p>Endast grabbar födda <b>2007–2009</b>, max <b>två spelare födda 2006 och Max 8 spelare och minst 6 spelare per lag och Max 16 lag kan bli anmälda</b>.</p>
+
+      <form id="form">
+        <label>Lagnamn *</label>
+        <input id="teamName" required placeholder="t.ex. Rågsved Rockets">
+
+        <label>Ort / Plats</label>
+        <input id="city" placeholder="t.ex. Stockholm">
+
+        <div class="row">
+          <div>
+            <label>Kapten – Namn *</label>
+            <input id="captainName" required>
+          </div>
+          <div>
+            <label>Kapten – Telefon *</label>
+            <input id="captainPhone" required placeholder="070-123 45 67">
+          </div>
+        </div>
+
+        <label>Spelare och födelseår *</label>
+        <textarea id="players" rows="6" placeholder="Exempel:
+Ali – 2007
+Kevin – 2008
+Jamal – 2009
+Ahmed – 2006 (Kapten)"></textarea>
+
+        <label><input id="consent" type="checkbox"> Jag godkänner att Street League lagrar uppgifterna för administration.</label>
+
+        <button class="btn primary" type="submit">Skicka anmälan</button>
+      </form>
+    </div>
+
+    <div id="thanks" class="card" style="display:none; margin-top:10px;">
+      ✅ Tack! Din anmälan har skickats.
+    </div>
+  </main>
+
+  <script>
+    // 🔧 Ändra till din Formspree-länk (skapa gratis på formspree.io)
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mldareyb";
+
+    document.getElementById("form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        Lagnamn: document.getElementById("teamName").value,
+        Ort: document.getElementById("city").value,
+        Kapten: document.getElementById("captainName").value,
+        Telefon: document.getElementById("captainPhone").value,
+        Spelare: document.getElementById("players").value,
+      };
+
+      if (!document.getElementById("consent").checked) {
+        alert("Du måste godkänna villkoren.");
+        return;
+      }
+
+      try {
+        const res = await fetch(FORMSPREE_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (res.ok) {
+          e.target.reset();
+          document.getElementById("thanks").style.display = "block";
+          setTimeout(() => (document.getElementById("thanks").style.display = "none"), 4000);
+        } else {
+          alert("Kunde inte skicka, försök igen.");
+        }
+      } catch {
+        alert("Något gick fel – kontrollera internetuppkopplingen.");
+      }
+    });
+  </script>
+</body>
+</html>
